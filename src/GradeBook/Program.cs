@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace GradeBook
 {
@@ -7,36 +6,11 @@ namespace GradeBook
     {
         static void Main(string[] args)
         {
-            var book = new Book("Michael's Grade Book");
-            book.GradeAdded += OnGradeAded;
-            book.GradeAdded += OnGradeAded;
-            book.GradeAdded -= OnGradeAded;
+            IBook book = new DiskBook("Michael's Grade Book");
             book.GradeAdded += OnGradeAded;
 
-            while(true)
-            {
-                Console.WriteLine("Enter a grade or 'q' to quit");
-                var input = Console.ReadLine();
+            EnterGrades(book);
 
-                if(input == "q")
-                {
-                    break;
-                }
-
-                try{
-                    var grade = double.Parse(input);
-                    book.AddGrade(grade);
-                }
-                catch(ArgumentException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-                catch(FormatException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            }
-            
             var stats = book.GetStatistics();
 
             Console.WriteLine($"For the book named {book.Name}");
@@ -44,6 +18,34 @@ namespace GradeBook
             Console.WriteLine($"The highest grade is {stats.High}");
             Console.WriteLine($"The average grade is {stats.Average:N1}");
             Console.WriteLine($"The letter grade is {stats.Letter}");
+        }
+
+        private static void EnterGrades(IBook book)
+        {
+            while (true)
+            {
+                Console.WriteLine("Enter a grade or 'q' to quit");
+                var input = Console.ReadLine();
+
+                if (input == "q")
+                {
+                    break;
+                }
+
+                try
+                {
+                    var grade = double.Parse(input);
+                    book.AddGrade(grade);
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                catch (FormatException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
         }
 
         static void OnGradeAded(object sender, EventArgs eventArgs)
